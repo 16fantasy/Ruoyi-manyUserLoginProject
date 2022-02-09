@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MyuserMapper">
+    
+    <resultMap type="Myuser" id="MyuserResult">
+        <result property="id"    column="id"    />
+        <result property="username"    column="username"    />
+        <result property="password"    column="password"    />
+        <result property="name"    column="name"    />
+    </resultMap>
+
+    <sql id="selectMyuserVo">
+        select id, username, password, name from myuser
+    </sql>
+
+    <select id="selectMyuserList" parameterType="Myuser" resultMap="MyuserResult">
+        <include refid="selectMyuserVo"/>
+        <where>  
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="password != null  and password != ''"> and password = #{password}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectMyuserById" parameterType="Long" resultMap="MyuserResult">
+        <include refid="selectMyuserVo"/>
+        where id = #{id}
+    </select>
+
+<!--    <select id="selectMyuserByUserName2" parameterType="String" resultMap="MyuserResult">-->
+<!--        <include refid="selectMyuserVo"/>-->
+<!--        where username = #{username}-->
+<!--    </select>-->
+
+    <select id="selectMyUserByUsername"  parameterType="java.lang.String" resultMap="MyuserResult">
+       select id, username, password  from  myuser  where username = #{username}
+    </select>
+
+<!--    <select id="selectMyUserByUsername" resultType="com.ruoyi.common.core.domain.entity.Myuser"></select>-->
+
+    <insert id="insertMyuser" parameterType="Myuser">
+        insert into myuser
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="username != null">username,</if>
+            <if test="password != null">password,</if>
+            <if test="name != null">name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="username != null">#{username},</if>
+            <if test="password != null">#{password},</if>
+            <if test="name != null">#{name},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMyuser" parameterType="Myuser">
+        update myuser
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="username != null">username = #{username},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="name != null">name = #{name},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMyuserById" parameterType="Long">
+        delete from myuser where id = #{id}
+    </delete>
+
+    <delete id="deleteMyuserByIds" parameterType="String">
+        delete from myuser where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
